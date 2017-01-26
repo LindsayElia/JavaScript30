@@ -58,7 +58,47 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+  
+  function playSound(event){
+    // console.log(event.keyCode);
+    const audio = document.querySelector(`audio[data-key="${event.keyCode}"`);
+    const key = document.querySelector(`.key[data-key="${event.keyCode}"`);
 
+    if (!audio){  // for other keys that do not have audio elements associated with them
+      return;
+    }
+    audio.currentTime = 0; // sets the audio file to start at the beginning so that if we are
+    // hitting the key rapidly, the audio plays each time we hit the key, instead of
+    // waiting to finish playing from the previous key event
+    audio.play();
+    key.classList.add("playing");
+  }
+
+  function removeTransition(event){
+    // console.log(event);
+    if (event.propertyName !== "transform"){  // skip all transitions except for the one 
+      return;                                 // with propertyName: "transform" 
+    }
+    this.classList.remove("playing");
+  }
+
+  const keys = document.querySelectorAll(".key");
+  keys.forEach(key => key.addEventListener("transitionend", removeTransition));
+  window.addEventListener("keydown", playSound);  // is the first thing to get called
+
+  /* 
+  new things I learned:
+      - html5 media elements (audio) have a currentTime method as well as many other methods
+      - Element.classList has an add, remove, and toggle method which looks just as easy
+      to use as using jquery's addClass method
+      - transitions are events that I can listen for https://developer.mozilla.org/en-US/docs/Web/Events/transitionend. Similaryly, can also listen for animations using the animation end event. 
+  */
+  /*
+  misc:
+    While playing around with the finished code, with the transition set to a longer time
+    (2 seconds instead of .07 seconds) I saw a lag when hitting the same key rapidly in succession, sometimes the removeTransition function was not getting applied.
+    But after refreshing the browser I could not replicate the lag so...non-issue?s
+  */
 </script>
 
 
